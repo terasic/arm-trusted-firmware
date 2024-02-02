@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2019-2023, Intel Corporation. All rights reserved.
+ * Copyright (c) 2019-2024, Intel Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -40,7 +40,7 @@
 #define PLAT_HANDOFF_OFFSET 0x0003F000
 
 #else
-#define PLAT_NS_IMAGE_OFFSET			0x10000000
+#define PLAT_NS_IMAGE_OFFSET			PRELOADED_BL33_BASE
 #define PLAT_HANDOFF_OFFSET			0xFFE3F000
 #endif
 

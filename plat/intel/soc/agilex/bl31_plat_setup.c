@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2020, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2019-2022, Intel Corporation. All rights reserved.
+ * Copyright (c) 2019-2024, Intel Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -13,11 +13,15 @@
 #include <drivers/ti/uart/uart_16550.h>
 #include <lib/mmio.h>
 #include <lib/xlat_tables/xlat_tables.h>
+#include <plat/common/platform.h>
 
 #include "ccu/ncore_ccu.h"
 #include "socfpga_mailbox.h"
 #include "socfpga_private.h"
 #include "socfpga_sip_svc.h"
+
+/* Get non-secure SPSR for BL33. Zephyr and Linux */
+uint32_t arm_get_spsr_for_bl33_entry(void);
 
 static entry_point_info_t bl32_image_ep_info;
 static entry_point_info_t bl33_image_ep_info;
@@ -69,6 +73,33 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 	 */
 	void *from_bl2 = (void *) arg0;
 
+#if RESET_TO_BL31
+	/* There are no parameters from BL2 if BL31 is a reset vector */
+	assert(from_bl2 == NULL);
+	void *plat_params_from_bl2 = (void *) arg3;
+
+	assert(plat_params_from_bl2 == NULL);
+
+	/* Populate entry point information for BL33 */
+	SET_PARAM_HEAD(&bl33_image_ep_info,
+				PARAM_EP,
+				VERSION_1,
+				0);
+
+# if ARM_LINUX_KERNEL_AS_BL33
+	/*
+	 * According to the file ``Documentation/arm64/booting.txt`` of the
+	 * Linux kernel tree, Linux expects the physical address of the device
+	 * tree blob (DTB) in x0, while x1-x3 are reserved for future use and
+	 * must be 0.
+	 */
+	bl33_image_ep_info.args.arg0 = (u_register_t)ARM_PRELOADED_DTB_BASE;
+	bl33_image_ep_info.args.arg1 = 0U;
+	bl33_image_ep_info.args.arg2 = 0U;
+	bl33_image_ep_info.args.arg3 = 0U;
+# endif
+
+#else /* RESET_TO_BL31 */
 	bl_params_t *params_from_bl2 = (bl_params_t *)from_bl2;
 	assert(params_from_bl2 != NULL);
 
@@ -98,6 +129,20 @@ void bl31_early_platform_setup2(u_register_t arg0, u_register_t arg1,
 		bl32_image_ep_info = *arg_from_bl2->bl32_ep_info;
 		bl33_image_ep_info = *arg_from_bl2->bl33_ep_info;
 	}
+
+	bl33_image_ep_info.args.arg0 = (u_register_t)ARM_PRELOADED_DTB_BASE;
+	bl33_image_ep_info.args.arg1 = 0U;
+	bl33_image_ep_info.args.arg2 = 0U;
+	bl33_image_ep_info.args.arg3 = 0U;
+#endif
+
+	/*
+	 * Tell BL31 where the non-trusted software image
+	 * is located and the entry state information
+	 */
+	bl33_image_ep_info.pc = plat_get_ns_image_entrypoint();
+	bl33_image_ep_info.spsr = arm_get_spsr_for_bl33_entry();
+
 	SET_SECURITY_STATE(bl33_image_ep_info.h.attr, NON_SECURE);
 }
 
@@ -177,3 +222,30 @@ void bl31_plat_arch_setup(void)
 	enable_mmu_el3(0);
 }
 
+/* Get non-secure image entrypoint for BL33. Zephyr and Linux */
+uintptr_t plat_get_ns_image_entrypoint(void)
+{
+#ifdef PRELOADED_BL33_BASE
+	return PRELOADED_BL33_BASE;
+#else
+	return PLAT_NS_IMAGE_OFFSET;
+#endif
+}
+
+/* Get non-secure SPSR for BL33. Zephyr and Linux */
+uint32_t arm_get_spsr_for_bl33_entry(void)
+{
+	unsigned int mode;
+	uint32_t spsr;
+
+	/* Figure out what mode we enter the non-secure world in */
+	mode = (el_implemented(2) != EL_IMPL_NONE) ? MODE_EL2 : MODE_EL1;
+
+	/*
+	 * TODO: Consider the possibility of specifying the SPSR in
+	 * the FIP ToC and allowing the platform to have a say as
+	 * well.
+	 */
+	spsr = SPSR_64((uint64_t)mode, MODE_SP_ELX, DISABLE_ALL_EXCEPTIONS);
+	return spsr;
+}

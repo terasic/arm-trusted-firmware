@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2019-2022, ARM Limited and Contributors. All rights reserved.
- * Copyright (c) 2019-2022, Intel Corporation. All rights reserved.
+ * Copyright (c) 2019-2024, Intel Corporation. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -113,7 +113,10 @@ void bl2_el3_plat_arch_setup(void)
 
 	setup_page_tables(bl_regions, agilex_plat_mmap);
 
-	enable_mmu_el3(0);
+	/*
+	 * TODO: mmu enable in latest phase
+	 */
+	// enable_mmu_el3(0);
 
 	dw_mmc_params_t params = EMMC_INIT_PARAMS(0x100000, get_mmc_clk());
 
