@@ -163,7 +163,7 @@ void sha384_start(const unsigned char *input, unsigned int len, unsigned char *o
 /* SHA512 Start Here */
 void sha512_init(sha512_context * ctx);
 void sha512_update(sha512_context *ctx, const uint8_t *input, uint32_t length);
-void sha512_finish(sha512_context *ctx, uint8_t digest[SHA384_SUM_LEN]);
+void sha512_finish(sha512_context *ctx, uint8_t digest[SHA512_SUM_LEN]);
 void sha512_start(const unsigned char *input, unsigned int len, unsigned char *output);
 void sha512_transform(uint64_t *state, const uint8_t *input);
 void sha512_block_fn(sha512_context *sst, const uint8_t *src,
