@@ -40,7 +40,12 @@
 #define PLAT_HANDOFF_OFFSET 0x0003F000
 
 #else
+/* Legacy Products. Please refactor with Agilex5 */
+#ifndef PRELOADED_BL33_BASE
+#define PLAT_NS_IMAGE_OFFSET			0x10000000
+#else
 #define PLAT_NS_IMAGE_OFFSET			PRELOADED_BL33_BASE
+#endif
 #define PLAT_HANDOFF_OFFSET			0xFFE3F000
 #endif
 

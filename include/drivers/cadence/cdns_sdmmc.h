@@ -284,8 +284,6 @@
 #define BIT_32(nr)				(U(1) << (nr))
 
 /* MMC Peripheral Definition */
-
-#define SOCFPGA_MMC_BLOCK_SIZE			U(32768)
 #define SOCFPGA_MMC_BLOCK_MASK			(SOCFPGA_MMC_BLOCK_SIZE - U(1))
 #define SOCFPGA_MMC_BOOT_CLK_RATE		(400 * 1000)
 #define MMC_RESPONSE_NONE			0
