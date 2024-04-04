@@ -21,7 +21,7 @@
 #define PLAT_PRIMARY_CPU_A76					0x200
 #define PLAT_CLUSTER_ID_MPIDR_AFF_SHIFT				MPIDR_AFF2_SHIFT
 #define PLAT_CPU_ID_MPIDR_AFF_SHIFT				MPIDR_AFF1_SHIFT
-#define PLAT_L2_RESET_REQ			0xB007C0DE
+#define PLAT_L2_RESET_REQ					0xB007C0DE
 
 /* System Counter */
 /* TODO: Update back to 400MHz.
@@ -31,7 +31,7 @@
 #define PLAT_SYS_COUNTER_FREQ_IN_MHZ				(400)
 
 /* FPGA config helpers */
-#define INTEL_SIP_SMC_FPGA_CONFIG_ADDR				0x400000
+#define INTEL_SIP_SMC_FPGA_CONFIG_ADDR				0x80400000
 #define INTEL_SIP_SMC_FPGA_CONFIG_SIZE				0x2000000
 
 /* QSPI Setting */
@@ -108,7 +108,7 @@
 /*******************************************************************************
  * WDT related constants
  ******************************************************************************/
-#define WDT_BASE			(0x10D00200)
+#define WDT_BASE						(0x10D00200)
 
 /*******************************************************************************
  * GIC related constants
@@ -123,13 +123,13 @@
 /*******************************************************************************
  * SDMMC related pointer function
  ******************************************************************************/
-#define SDMMC_READ_BLOCKS	sdmmc_read_blocks
-#define SDMMC_WRITE_BLOCKS	sdmmc_write_blocks
+#define SDMMC_READ_BLOCKS					sdmmc_read_blocks
+#define SDMMC_WRITE_BLOCKS					sdmmc_write_blocks
 
 /*******************************************************************************
  * sysmgr.boot_scratch_cold6 & 7 (64bit) are used to indicate L2 reset
  * is done and HPS should trigger warm reset via RMR_EL3.
  ******************************************************************************/
-#define L2_RESET_DONE_REG			0x10D12218
+#define L2_RESET_DONE_REG					0x10D12218
 
 #endif /* PLAT_SOCFPGA_DEF_H */
