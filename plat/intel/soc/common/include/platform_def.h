@@ -150,8 +150,8 @@
 /*******************************************************************************
  * UART related constants
  ******************************************************************************/
-#define CRASH_CONSOLE_BASE			PLAT_UART0_BASE
-#define PLAT_INTEL_UART_BASE			PLAT_UART0_BASE
+#define CRASH_CONSOLE_BASE			PLAT_UART1_BASE
+#define PLAT_INTEL_UART_BASE			PLAT_UART1_BASE
 
 #define PLAT_BAUDRATE				(115200)
 #define PLAT_UART_CLOCK				(100000000)
